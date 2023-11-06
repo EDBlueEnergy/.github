@@ -1,17 +1,8 @@
----
-name: Default pull request
-about: Make a pull request for this project
-title: '[PR]'
----
-
 ### 🤔 This is a ...
 
 - [ ] New feature
 - [ ] Bug fix
-- [ ] Site / documentation update
-- [ ] Demo update
 - [ ] Component style update
-- [ ] TypeScript definition update
 - [ ] Bundle size optimization
 - [ ] Performance optimization
 - [ ] Enhancement feature
@@ -21,21 +12,25 @@ title: '[PR]'
 - [ ] Test Case
 - [ ] Branch merge
 - [ ] Workflow
+- [ ] Documentation update
+- [ ] Dev update
+- [ ] Production update
 - [ ] Other (about what?)
 
-### 🔗 Related issue link
+### 🔗 Related issue/PR link
 
 <!--
-1. Put the related issue or discussion links here.
-2. close #xxxx or fix #xxxx for instance.
+1. Put the related issue, discussion, or PR links here.
+2. close #xxxx, fixes #xxxxm, or depends on #xxxx for instance.
 -->
 
-### 💡 Background and solution
+### 💡 Background and summary
 
 <!--
-1. Describe the problem and the scenario.
+1. Describe the problem and the scenario (if applicable).
 2. GIF or snapshot should be provided if includes UI/interactive modification.
 3. How to fix the problem, and list the final API implementation and usage sample if that is a new feature.
+4. List of features included if production or dev update.
 -->
 
 ### 📝 Changelog
@@ -52,22 +47,8 @@ Describe changes from the user side, and list all potential break changes or oth
 
 ⚠️ Please check all items below before requesting a reviewing. ⚠️
 
-- [ ] Doc is updated/provided or not needed
-- [ ] Demo is updated/provided or not needed
-- [ ] TypeScript definition is updated/provided or not needed
+- [ ] Docs are updated/provided or not needed
+- [ ] Dev is updated/provided or not needed
 - [ ] Changelog is provided or not needed
 
 ---
-
-<!--
-Below are template for copilot to generate CR message.
-Please DO NOT modify it.
--->
-
-### 🚀 Summary
-
-copilot:summary
-
-### 🔍 Walkthrough
-
-copilot:walkthrough
