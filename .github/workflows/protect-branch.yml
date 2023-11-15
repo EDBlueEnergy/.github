@@ -1,0 +1,22 @@
+name: Update branch protection rule
+env:
+  CONFIG_PATH: "branch-protection.config.json"
+on:
+  push:
+    paths:
+      - ${{ env.CONFIG_PATH }}
+jobs:
+  update-branch-protection:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Update protection rules
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          curl -X PUT \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -d @${{ env.CONFIG_PATH }} \
+            "https://api.github.com/repos/${{ github.repository }}/branches/azure/protection"
