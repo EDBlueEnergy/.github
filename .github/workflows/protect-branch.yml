@@ -1,8 +1,9 @@
 name: Update branch protection rule
 on:
   push:
-    paths:
-      - branch-protection.config.json
+    branches:
+      - master
+      - main
 jobs:
   update-branch-protection:
     runs-on: ubuntu-latest
