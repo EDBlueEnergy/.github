@@ -1,9 +1,8 @@
 name: Update branch protection rule
 on:
   push:
-    branches:
-      - master
-      - main
+    paths:
+      - ".github/branch-protection.config.json"
 jobs:
   update-branch-protection:
     runs-on: ubuntu-latest
@@ -13,7 +12,7 @@ jobs:
       - name: Update protection rules
         env:
           GITHUB_TOKEN: ${{ secrets.BLUE_ENERGY_TOKEN }}
-          CONFIG_PATH: "branch-protection.config.json"
+          CONFIG_PATH: ".github/branch-protection.config.json"
         run: |
           curl -X PUT \
             -H "Accept: application/vnd.github+json" \
