@@ -33,22 +33,13 @@
 4. List of features included if production or dev update.
 -->
 
-### 📝 Changelog
-
-<!--
-Describe changes from the user side, and list all potential break changes or other risks.
---->
-
-| Language   | Changelog |
-| ---------- | --------- |
-| 🇺🇸 English |           |
-
 ### ☑️ Self-Check before Merge
 
 ⚠️ Please check all items below before requesting a reviewing. ⚠️
 
 - [ ] Docs are updated/provided or not needed
 - [ ] Dev is updated/provided or not needed
-- [ ] Changelog is provided or not needed
+- [ ] Title is descriptive and succinct for changelog
+- [ ] Environment variables are updated/provided in deployment slots or not needed
 
 ---
