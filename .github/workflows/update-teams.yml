@@ -35,7 +35,7 @@ jobs:
           ORG_NAME: "EDBlueEnergy"
         run: |
           API_URL="https://api.github.com/orgs/$ORG_NAME/teams"
-          REPOS=$(curl -s -H "Authorization: token $ACCESS_TOKEN" $API_URL | jq -c '[.[] | {id: .id}]')
+          TEAMS=$(curl -s -H "Authorization: token $ACCESS_TOKEN" $API_URL | jq -c '[.[] | {id: .id}]')
           echo "$TEAMS" > teams.json
 
       - name: Upload team list
