@@ -1,0 +1,74 @@
+name: Update teams
+
+on:
+  push:
+    paths:
+      - ".github/workflows/update-teams.yml"
+
+jobs:
+  fetch-repos:
+    runs-on: ubuntu-latest
+    steps:
+      - name: List repositories
+        id: list-repos
+        env:
+          ACCESS_TOKEN: ${{ secrets.BLUE_ENERGY_TOKEN }}
+          ORG_NAME: "EDBlueEnergy"
+        run: |
+          API_URL="https://api.github.com/orgs/$ORG_NAME/repos"
+          REPOS=$(curl -s -H "Authorization: token $ACCESS_TOKEN" $API_URL | jq -c '[.[] | {name: .name}]')
+          echo "$REPOS" > repos.json
+
+      - name: Upload repository list
+        uses: actions/upload-artifact@v3
+        with:
+          name: repository-list
+          path: repos.json
+
+  fetch-teams:
+    runs-on: ubuntu-latest
+    steps:
+      - name: List teams
+        id: list-teams
+        env:
+          ACCESS_TOKEN: ${{ secrets.BLUE_ENERGY_TOKEN }}
+          ORG_NAME: "EDBlueEnergy"
+        run: |
+          API_URL="https://api.github.com/orgs/$ORG_NAME/teams"
+          REPOS=$(curl -s -H "Authorization: token $ACCESS_TOKEN" $API_URL | jq -c '[.[] | {id: .id}]')
+          echo "$TEAMS" > teams.json
+
+      - name: Upload team list
+        uses: actions/upload-artifact@v3
+        with:
+          name: team-list
+          path: teams.json
+
+  update-teams:
+    runs-on: ubuntu-latest
+    needs: [fetch-repos, fetch-teams]
+    steps:
+      - name: Download repository list
+        uses: actions/download-artifact@v3
+        with:
+          name: repository-list
+
+      - name: Download team list
+        uses: actions/download-artifact@v3
+        with:
+          name: team-list
+
+      - name: Add teams to repositories
+        env:
+          ACCESS_TOKEN: ${{ secrets.BLUE_ENERGY_TOKEN }}
+        run: |
+          for repo_json in $(jq -c '.[]' repos.json); do
+            repo_name=$(echo "$repo_json" | jq -r '.name')
+            for team_json in $(jq -c '.[]' teams.json); do
+              team_id=$(echo "$team_json" | jq -r '.id')
+              curl -X PUT \
+                -H "Authorization: token $ACCESS_TOKEN" \
+                -d '{}' \
+                "https://api.github.com/repos/$repo_name/teams/$team_id"
+            done
+          done
