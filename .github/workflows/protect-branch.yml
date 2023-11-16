@@ -51,6 +51,11 @@ jobs:
             repo_name=$(echo "$repo_json" | jq -r '.name')
             default_branch=$(echo "$repo_json" | jq -r '.default_branch')
 
+            if [ "$repo_name" == ".github" ]; then
+              echo "Skipping .github repo..."
+              continue  # Skip updating protection rules for this repository
+            fi
+
             # Check if 'azure' branch exists, if not, fallback to default branch
             response=$(curl -s -o /dev/null -w "%{http_code}" -X GET -H "Authorization: token $ACCESS_TOKEN" "https://api.github.com/repos/$ORG_NAME/$repo_name/branches/azure")
             if [ $response -eq 200 ]; then
