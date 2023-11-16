@@ -1,21 +1,68 @@
 name: Update branch protection rule
+
 on:
   push:
     paths:
       - ".github/branch-protection.config.json"
+
 jobs:
-  update-branch-protection:
+  fetch-repos:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: List repositories
+        id: list-repos
+        env:
+          ACCESS_TOKEN: ${{ secrets.BLUE_ENERGY_TOKEN }}
+          ORG_NAME: "EDBlueEnergy"
+        run: |
+          API_URL="https://api.github.com/orgs/$ORG_NAME/repos"
+          REPOS=$(curl -s -H "Authorization: token $ACCESS_TOKEN" $API_URL | jq -c '[.[] | {name: .name, default_branch: .default_branch}]')
+          echo "$REPOS" > repos.json
+
+      - name: Upload repository list
+        uses: actions/upload-artifact@v3
+        with:
+          name: repository-list
+          path: repos.json
+
+  update-branch-protection:
+    runs-on: ubuntu-latest
+    needs: fetch-repos
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download repository list
+        uses: actions/download-artifact@v3
+        with:
+          name: repository-list
+
       - name: Update protection rules
         env:
-          GITHUB_TOKEN: ${{ secrets.BLUE_ENERGY_TOKEN }}
+          ACCESS_TOKEN: ${{ secrets.BLUE_ENERGY_TOKEN }}
           CONFIG_PATH: ".github/branch-protection.config.json"
+          ORG_NAME: "EDBlueEnergy"
         run: |
-          curl -X PUT \
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: token $GITHUB_TOKEN" \
-            -d @$CONFIG_PATH \
-            "https://api.github.com/repos/${{ github.repository }}/branches/azure/protection"
+          # Loop through repositories and update branch protection
+          for repo_json in $(jq -c '.[]' repos.json); do
+            repo_name=$(echo "$repo_json" | jq -r '.name')
+            default_branch=$(echo "$repo_json" | jq -r '.default_branch')
+
+            protection_url="https://api.github.com/repos/$ORG_NAME/$repo_name/branches/azure/protection"
+
+            # Check if 'azure' branch exists, if not, fallback to default branch
+            response=$(curl -s -o /dev/null -w "%{http_code}" -X GET -H "Authorization: token $ACCESS_TOKEN" $protection_url)
+            if [ $response -eq 404 ]; then
+              protection_url="https://api.github.com/repos/$ORG_NAME/$repo_name/branches/$default_branch/protection"
+            fi
+
+            # Apply protection rules
+            curl -X PUT \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: token $ACCESS_TOKEN" \
+              -d @$CONFIG_PATH \
+              "$protection_url"
+          done
