@@ -77,7 +77,7 @@ jobs:
 
               curl -X PUT \
                 -H "Authorization: token $ACCESS_TOKEN" \
-                -d '{"permission":$permission}' \
+                -d "{\"permission\":\"$permission\"}" \
                 "https://api.github.com/teams/$team_id/repos/$ORG_NAME/$repo_name"
             done
           done
