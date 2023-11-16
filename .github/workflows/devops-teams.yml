@@ -1,0 +1,56 @@
+name: Update teams
+
+on:
+  push:
+    paths:
+      - ".github/workflows/devops-teams.yml"
+
+jobs:
+  fetch-repos:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: List repositories
+        id: list-repos
+        env:
+          ACCESS_TOKEN: ${{ secrets.BLUE_ENERGY_TOKEN }}
+          ORG_NAME: "EDBlueEnergy"
+        run: |
+          API_URL="https://api.github.com/orgs/$ORG_NAME/repos"
+          REPOS=$(curl -s -H "Authorization: token $ACCESS_TOKEN" $API_URL | jq -c '[.[] | {name: .name}]')
+          echo "$REPOS" > repos.json
+
+      - name: Upload repository list
+        uses: actions/upload-artifact@v3
+        with:
+          name: repository-list
+          path: repos.json
+
+  update-teams:
+    runs-on: ubuntu-latest
+    needs: fetch-repos
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download repository list
+        uses: actions/download-artifact@v3
+        with:
+          name: repository-list
+
+      - name: Update repo teams
+        env:
+          ACCESS_TOKEN: ${{ secrets.BLUE_ENERGY_TOKEN }}
+          TEAM_SLUG: "devops"
+          ORG_NAME: "EDBlueEnergy"
+        run: |
+          # Loop through repositories and add the team to each one
+          for repo_json in $(jq -c '.[]' repos.json); do
+            repo_name=$(echo "$repo_json" | jq -r '.name')
+            curl -X PUT \
+              -H "Authorization: token $ACCESS_TOKEN" \
+              -d '{}' \
+              "https://api.github.com/repos/$repo_name/teams/$TEAM_SLUG"
+          done
