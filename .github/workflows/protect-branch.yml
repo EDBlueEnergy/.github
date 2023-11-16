@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - ".github/branch-protection.config.json"
+      - ".github/workflows/protect-branch.yml"
 
 jobs:
   fetch-repos:
