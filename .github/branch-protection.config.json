@@ -7,7 +7,7 @@
     "required_pull_request_reviews":{
        "dismissal_restrictions":{
           "users":[],
-          "teams":["EDBlueEnergy/devops"],
+          "teams":["DevOps"],
           "apps":[]
        },
        "dismiss_stale_reviews":true,
@@ -16,13 +16,13 @@
        "require_last_push_approval":false,
        "bypass_pull_request_allowances":{
           "users":[],
-          "teams":["EDBlueEnergy/devops"],
+          "teams":["DevOps"],
           "apps":[]
        }
     },
     "restrictions":{
        "users":[],
-       "teams":["EDBlueEnergy/devops"],
+       "teams":["DevOps"],
        "apps":[]
     },
     "required_linear_history":true,
