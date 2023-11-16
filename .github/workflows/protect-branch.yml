@@ -65,7 +65,23 @@ jobs:
               fi
             fi
 
-            # Apply protection rules
+            # Get branches in the repository
+            branches=$(curl -s -H "Authorization: token $ACCESS_TOKEN" "https://api.github.com/repos/$ORG_NAME/$repo_name/branches" | jq -r '.[].name')
+            
+            # Loop through branches and delete existing protection rules
+            for branch in $branches; do
+              branch_protection_url="https://api.github.com/repos/$ORG_NAME/$repo_name/branches/$branch/protection"
+              response=$(curl -s -o /dev/null -w "%{http_code}" -X GET -H "Authorization: token $ACCESS_TOKEN" "$protection_url")
+
+              # If protection rules exist for the branch, delete them
+              if [ $response -eq 200 ]; then
+                curl -X DELETE \
+                  -H "Authorization: token $ACCESS_TOKEN" \
+                  "$branch_protection_url"
+              fi
+            done
+
+            # Apply new protection rules
             curl -X PUT \
               -H "Accept: application/vnd.github+json" \
               -H "Authorization: token $ACCESS_TOKEN" \
