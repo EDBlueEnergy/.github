@@ -47,17 +47,22 @@ jobs:
           CONFIG_PATH: ".github/branch-protection.config.json"
           ORG_NAME: "EDBlueEnergy"
         run: |
-          # Loop through repositories and update branch protection
           for repo_json in $(jq -c '.[]' repos.json); do
             repo_name=$(echo "$repo_json" | jq -r '.name')
             default_branch=$(echo "$repo_json" | jq -r '.default_branch')
 
-            protection_url="https://api.github.com/repos/$ORG_NAME/$repo_name/branches/azure/protection"
-
             # Check if 'azure' branch exists, if not, fallback to default branch
-            response=$(curl -s -o /dev/null -w "%{http_code}" -X GET -H "Authorization: token $ACCESS_TOKEN" $protection_url)
-            if [ $response -eq 404 ]; then
-              protection_url="https://api.github.com/repos/$ORG_NAME/$repo_name/branches/$default_branch/protection"
+            response=$(curl -s -o /dev/null -w "%{http_code}" -X GET -H "Authorization: token $ACCESS_TOKEN" "https://api.github.com/repos/$ORG_NAME/$repo_name/branches/azure")
+            if [ $response -eq 200 ]; then
+              protection_url="https://api.github.com/repos/$ORG_NAME/$repo_name/branches/azure/protection"
+            else
+              response=$(curl -s -o /dev/null -w "%{http_code}" -X GET -H "Authorization: token $ACCESS_TOKEN" "https://api.github.com/repos/$ORG_NAME/$repo_name/branches/$default_branch")
+              if [ $response -eq 200 ]; then
+                protection_url="https://api.github.com/repos/$ORG_NAME/$repo_name/branches/$default_branch/protection"
+              else
+                echo "Both 'azure' and default branches don't exist in $repo_name."
+                continue  # Skip updating protection rules for this repository
+              fi
             fi
 
             # Apply protection rules
