@@ -35,7 +35,7 @@ jobs:
           ORG_NAME: "EDBlueEnergy"
         run: |
           API_URL="https://api.github.com/orgs/$ORG_NAME/teams"
-          TEAMS=$(curl -s -H "Authorization: token $ACCESS_TOKEN" $API_URL | jq -c '[.[] | {id: .id}]')
+          TEAMS=$(curl -s -H "Authorization: token $ACCESS_TOKEN" $API_URL | jq -c '[.[] | {id: .id, name: .name}]')
           echo "$TEAMS" > teams.json
 
       - name: Upload team list
@@ -53,22 +53,26 @@ jobs:
         with:
           name: repository-list
 
-      - name: Download team list
-        uses: actions/download-artifact@v3
-        with:
-          name: team-list
-
       - name: Add teams to repositories
         env:
           ACCESS_TOKEN: ${{ secrets.BLUE_ENERGY_TOKEN }}
+          ORG_NAME: "EDBlueEnergy"
         run: |
-          for repo_json in $(jq -c '.[]' repos.json); do
-            repo_name=$(echo "$repo_json" | jq -r '.name')
-            for team_json in $(jq -c '.[]' teams.json); do
-              team_id=$(echo "$team_json" | jq -r '.id')
+          for team_json in $(jq -c '.[]' teams.json); do
+            team_id=$(echo "$team_json" | jq -r '.id')
+            team_name=$(echo "$team_json" | jq -r '.name')
+
+            for repo_json in $(jq -c '.[]' repos.json); do
+              repo_name=$(echo "$repo_json" | jq -r '.name')
+              permission="read"
+
+              if [ "$team_name" == "DevOps" ]; then
+                permission="admin"
+              fi
+
               curl -X PUT \
                 -H "Authorization: token $ACCESS_TOKEN" \
-                -d '{}' \
-                "https://api.github.com/repos/$repo_name/teams/$team_id"
+                -d '{"permission":$permission}' \
+                "https://api.github.com/teams/$team_id/repos/$ORG_NAME/$repo_name"
             done
           done
