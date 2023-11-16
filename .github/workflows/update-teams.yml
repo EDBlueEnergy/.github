@@ -53,6 +53,11 @@ jobs:
         with:
           name: repository-list
 
+      - name: Download team list
+        uses: actions/download-artifact@v3
+        with:
+          name: team-list
+
       - name: Add teams to repositories
         env:
           ACCESS_TOKEN: ${{ secrets.BLUE_ENERGY_TOKEN }}
