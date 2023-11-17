@@ -2,7 +2,7 @@ name: Release Tag
 on:
   push:
     branches:
-      - ${{ params.branch_name }}
+      - PARAMS_BRANCH_NAME
 jobs:
   tag:
     runs-on: ubuntu-latest

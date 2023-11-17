@@ -75,7 +75,7 @@ jobs:
 
             mkdir -p .github/workflows
             cp .github/workflows/templates/update-release.yml .github/workflows/templates/update-release-draft.yml
-            sed -i "s/\${{ params.branch_name }}/$branch_name/g" .github/workflows/templates/update-release-draft.yml
+            sed -i "s/\PARAMS_BRANCH_NAME/$branch_name/g" .github/workflows/templates/update-release-draft.yml
             cp .github/workflows/templates/update-release-draft.yml issue-templates/.github/workflows/update-release.yml
 
 
