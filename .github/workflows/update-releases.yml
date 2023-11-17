@@ -16,7 +16,7 @@ jobs:
       - name: List repositories
         id: list-repos
         run: |
-          ACCESS_TOKEN=${{ secrets.BLUE_ENERGY_SECRET }}
+          ACCESS_TOKEN=${{ secrets.BLUE_ENERGY_TOKEN }}
           ORG_NAME=EDBlueEnergy
           API_URL="https://api.github.com/orgs/$ORG_NAME/repos"
           REPOS=$(curl -s -H "Authorization: token $ACCESS_TOKEN" $API_URL | jq -c '[.[] | {name: .name, default_branch: .default_branch}]')
@@ -50,9 +50,9 @@ jobs:
 
             # Set the GITHUB_TOKEN as an environment variable
             export GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
-            export BLUE_ENERGY_SECRET="${{ secrets.BLUE_ENERGY_SECRET }}"
+            export BLUE_ENERGY_TOKEN="${{ secrets.BLUE_ENERGY_TOKEN }}"
 
-            repo_url="https://$GITHUB_TOKEN:$BLUE_ENERGY_SECRET@github.com/EDBlueEnergy/$repo_name.git"
+            repo_url="https://$GITHUB_TOKEN:$BLUE_ENERGY_TOKEN@github.com/EDBlueEnergy/$repo_name.git"
             echo "Processing repo $repo_name on branch $default_branch from $repo_url"
 
             # Clone the repository using the GITHUB_TOKEN and HTTPS URL
