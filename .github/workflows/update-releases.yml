@@ -1,4 +1,4 @@
-name: Add templates
+name: Update releases
 on:
   push:
     paths:
