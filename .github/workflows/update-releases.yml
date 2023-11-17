@@ -42,7 +42,7 @@ jobs:
             repo_name=$(echo "$repo_json" | jq -r '.name')
             default_branch=$(echo "$repo_json" | jq -r '.default_branch')
 
-            if [ "$repo_name" != "issue-templates" ]; then
+            if [ "$repo_name" != "demo-repository" ]; then
               continue
             fi
 
