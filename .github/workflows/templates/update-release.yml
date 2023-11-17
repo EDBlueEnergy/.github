@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - PARAMS_BRANCH_NAME
+  workflow_dispatch:
 jobs:
   tag:
     runs-on: ubuntu-latest

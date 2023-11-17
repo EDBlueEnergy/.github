@@ -1,9 +1,12 @@
 name: Update releases
+
 on:
   push:
     paths:
-      - ".github/update-releases.yml"
+      - ".github/workflows/update-releases.yml"
       - ".github/workflows/templates/update-release.yml"
+  workflow_dispatch:
+
 jobs:
   fetch-repos:
     runs-on: ubuntu-latest
