@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - ".github/workflows/update-teams.yml"
-
+  workflow_dispatch:
 jobs:
   fetch-repos:
     runs-on: ubuntu-latest
