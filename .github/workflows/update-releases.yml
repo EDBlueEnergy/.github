@@ -78,8 +78,13 @@ jobs:
 
 
             git add .github
-            git commit -m "[Automation] Update organization-wide workflows 🤖"
-            git push
+
+            if [[ -n $(git status --porcelain) ]]; then
+              git commit -m "[Automation] Update organization-wide workflows 🤖"
+              git push
+            else
+                echo "No changes to commit in $repo_name"
+            fi
 
             # Move back to the original working directory
             cd ..
