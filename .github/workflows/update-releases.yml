@@ -10,9 +10,6 @@ jobs:
   fetch-repos:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
       - name: List repositories
         id: list-repos
         run: |
@@ -28,11 +25,11 @@ jobs:
           name: repository-list
           path: repos.json
 
-  add-templates:
+  update-releases:
     runs-on: ubuntu-latest
     needs: fetch-repos
     steps:
-      - name: Clone issue-templates
+      - name: Checkout repository
         uses: actions/checkout@v4
       - name: Download repository list
         uses: actions/download-artifact@v3
