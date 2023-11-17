@@ -4,8 +4,6 @@ on:
     paths:
       - ".github/update-releases.yml"
       - ".github/workflows/templates/update-release.yml"
-  workflow_dispatch:
-
 jobs:
   fetch-repos:
     runs-on: ubuntu-latest
@@ -71,9 +69,9 @@ jobs:
             fi
 
             mkdir -p .github/workflows
-            cp .github/workflows/templates/update-release.yml .github/workflows/templates/update-release-draft.yml
-            sed -i "s/\PARAMS_BRANCH_NAME/$branch_name/g" .github/workflows/templates/update-release-draft.yml
-            cp .github/workflows/templates/update-release-draft.yml issue-templates/.github/workflows/update-release.yml
+            cp ../.github/workflows/templates/update-release.yml ../.github/workflows/templates/update-release-draft.yml
+            sed -i "s/\PARAMS_BRANCH_NAME/$branch_name/g" ../.github/workflows/templates/update-release-draft.yml
+            cp ../.github/workflows/templates/update-release-draft.yml issue-templates/.github/workflows/update-release.yml
 
 
             git add .github
