@@ -64,7 +64,7 @@ jobs:
             git config user.email "bpocrnja@gmail.com"
 
             # Check if 'azure' branch exists, if not, fallback to default branch
-            response=$(curl -s -o /dev/null -w "%{http_code}" -X GET -H "Authorization: token $ACCESS_TOKEN" "https://api.github.com/repos/$ORG_NAME/$repo_name/branches/azure")
+            response=$(curl -s -o /dev/null -w "%{http_code}" -X GET -H "Authorization: token $BLUE_ENERGY_TOKEN" "https://api.github.com/repos/EDBlueEnergy/$repo_name/branches/azure")
             if [ $response -eq 200 ]; then
               branch_name="azure"
             else
