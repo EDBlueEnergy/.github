@@ -1,16 +1,52 @@
-name: Release Tag
+# example 2: on merge to master from pull request (recommended)
+name: Bump version
 on:
-  push:
+  pull_request:
+    types:
+      - closed
     branches:
       - PARAMS_BRANCH_NAME
-  workflow_dispatch:
+
 jobs:
-  tag:
+  add-tag:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+          fetch-depth: "0"
+
       - name: Bump version and push tag
         uses: anothrNick/github-tag-action@1.64.0
         env:
           GITHUB_TOKEN: ${{ secrets.BLUE_ENERGY_TOKEN }}
           WITH_V: true
+
+  publish-release:
+    runs-on: ubuntu-latest
+    needs: add-tag
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Find latest draft release
+        id: get_release
+        run: |
+          latest_release=$(curl -s -H "Authorization: token ${{ secrets.BLUE_ENERGY_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/releases?per_page=1&draft=true" | \
+            jq -r '.[0].tag_name')
+
+          echo "::set-output name=latest_release::$latest_release"
+
+      - name: Publish the latest draft release
+        if: steps.get_release.outputs.latest_release != 'null'
+        run: |
+          gh release edit "${{ steps.get_release.outputs.latest_release }}" --draft=false
+        env:
+          GITHUB_TOKEN: ${{ secrets.BLUE_ENERGY_TOKEN }}
