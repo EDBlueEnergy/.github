@@ -73,6 +73,8 @@ jobs:
 
               if [ "$team_name" == "DevOps" ]; then
                 permission="admin"
+              elif [ "$team_name" == "Developers" ]; then
+                permission="maintain"
               fi
 
               curl -X PUT \
