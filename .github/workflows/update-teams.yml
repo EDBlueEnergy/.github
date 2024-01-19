@@ -15,7 +15,7 @@ jobs:
           ACCESS_TOKEN: ${{ secrets.BLUE_ENERGY_TOKEN }}
           ORG_NAME: "EDBlueEnergy"
         run: |
-          API_URL="https://api.github.com/orgs/$ORG_NAME/repos"
+          API_URL="https://api.github.com/orgs/$ORG_NAME/repos?per_page=1000"
           REPOS=$(curl -s -H "Authorization: token $ACCESS_TOKEN" $API_URL | jq -c '[.[] | {name: .name}]')
           echo "$REPOS" > repos.json
 
