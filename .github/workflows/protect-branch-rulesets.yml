@@ -21,7 +21,7 @@ jobs:
         run: |
 
           repo_name="ruleset-test"
-          repo_url = "https://api.github.com/repos/$ORG_NAME/$repo_name/rulesets \"
+          repo_url = "https://api.github.com/repos/$ORG_NAME/$repo_name/rulesets"
 
           # Apply protection rules
           curl -X PUT \
