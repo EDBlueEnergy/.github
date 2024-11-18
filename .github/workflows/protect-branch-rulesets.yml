@@ -19,6 +19,9 @@ jobs:
           ACCESS_TOKEN: ${{ secrets.BLUE_ENERGY_TOKEN }}
           ORG_NAME: "EDBlueEnergy"
         run: |
+          response=$(curl -L -H "Accept: application/vnd.github+json" -H "Authorization: token $ACCESS_TOKEN" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/orgs/$ORG_NAME/teams)
+          echo $response
+
           # API_URL='https://api.github.com/orgs/$ORG_NAME/teams'
           # response=$(curl -L \
           # -H "Accept: application/vnd.github+json" \
@@ -26,12 +29,6 @@ jobs:
           # -H "X-GitHub-Api-Version: 2022-11-28" \
           # $API_URL
           # )
-          response=$(curl -L \
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: token $ACCESS_TOKEN" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            https://api.github.com/orgs/$ORG_NAME/teams)
-          echo $response
           # team_id=$(echo "$response" | jq -r '.id')
 
           # echo "TEAM_ID=$team_id" >> $GITHUB_ENV
