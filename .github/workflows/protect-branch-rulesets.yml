@@ -7,9 +7,12 @@ on:
       - ".github/workflows/protect-branch-rulesets.yml"
   workflow_dispatch:
 jobs:
-  get-devops-team:
+  create-branch-ruleset:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Get DevOps Team ID
         id: fetch_bypass_team_id
         env:
@@ -27,12 +30,6 @@ jobs:
           team_id=$(echo "$response" | jq -r '.id')
 
           echo "TEAM_ID=$team_id" >> $GITHUB_ENV
-
-  update-branch-protection:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
 
       - name: Update protection rules
         env:
