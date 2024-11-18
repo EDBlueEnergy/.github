@@ -19,7 +19,7 @@ jobs:
           ACCESS_TOKEN: ${{ secrets.BLUE_ENERGY_TOKEN }}
           ORG_NAME: "EDBlueEnergy"
         run: |
-          API_URL='https://api.github.com/orgs/$ORG_NAME/teams/DevOps'
+          API_URL='https://api.github.com/orgs/$ORG_NAME/teams/devops'
           response=$(curl -L \
           -H "Accept: application/vnd.github+json" \
           -H "Authorization: token $ACCESS_TOKEN" \
