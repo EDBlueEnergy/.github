@@ -41,7 +41,7 @@ jobs:
           RULESET=$(cat $CONFIG_PATH)
 
           # Add bypass team
-          UPDATED_RULESET=$(echo "RULESET" | jq --arg team_id "$TEAM_ID" ". + {"bypass_actors":[{"actor_id":$team_id,"actor_type":"Team","bypass_mode":"always"}]}")
+          UPDATED_RULESET=$(echo "RULESET" | jq --arg team_id "$TEAM_ID" '. + {"bypass_actors":[{"actor_id":$team_id,"actor_type":"Team","bypass_mode":"always"}]}')
 
           repo_name="ruleset-test"
 
