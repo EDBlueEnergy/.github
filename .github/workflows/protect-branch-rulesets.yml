@@ -19,11 +19,11 @@ jobs:
           ORG_NAME: "EDBlueEnergy"
           CONFIG_PATH: ".github/repo-protection-ruleset.json"
         run: |
-          API_URL='https://api.github.com/orgs/$ORG_NAME/teams'
+          API_URL="https://api.github.com/orgs/$ORG_NAME/teams/devops"
           response=$(curl -L \
-          -H "Accept: application/vnd.github+json" \
-          -H "Authorization: token $ACCESS_TOKEN" \
-          -H "X-GitHub-Api-Version: 2022-11-28" \
-          $API_URL
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: token $ACCESS_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            $API_URL
           )
           echo $response
