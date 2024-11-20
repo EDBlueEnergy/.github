@@ -1,11 +1,11 @@
 {
-  "name": "repo-protection-ruleset",
+  "name": "repo-feature-ruleset",
   "target": "branch",
   "enforcement": "active",
   "conditions": {
     "ref_name": {
       "exclude": [],
-      "include": ["refs/heads/feature/*", "refs/heads/azure"]
+      "include": ["refs/heads/feature/*"]
     }
   },
   "rules": [

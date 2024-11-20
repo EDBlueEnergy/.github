@@ -3,7 +3,7 @@ name: Update Repo Rulesets
 on:
   push:
     paths:
-      - ".github/repo-protection-ruleset.json"
+      - ".github/repo-feature-ruleset.json"
       - ".github/workflows/repo-rulesets.yml"
   workflow_dispatch:
 jobs:
@@ -62,13 +62,14 @@ jobs:
       - name: Update Rulesets
         env:
           ACCESS_TOKEN: ${{ secrets.BLUE_ENERGY_TOKEN }}
-          FEATUER_CONFIG_PATH: ".github/repo-protection-ruleset.json"
+          FEATUER_CONFIG_PATH: ".github/repo-feature-ruleset.json"
           ORG_NAME: "EDBlueEnergy"
           TEAM_ID: ${{env.TEAM_ID}}
         run: |
 
           # Get ruleset json
           FEATURE_RULESET=$(cat $FEATUER_CONFIG_PATH)
+          RULESET_NAME=$(echo "$RULESET" | jq -r '.name')
 
           # Add bypass team
           UPDATED_FEATURE_RULESET=$(echo "$FEATURE_RULESET" | jq --argjson team_id "$TEAM_ID" '. + {"bypass_actors":[{"actor_id":$team_id,"actor_type":"Team","bypass_mode":"always"}]}')
@@ -89,7 +90,8 @@ jobs:
               "https://api.github.com/repos/$ORG_NAME/$REPO_NAME/rulesets"
             )
 
-            FEATURE_RULESET_ID=$(echo "$REPO_RULESET_LIST" | jq -r --arg ruleset_name "$RULESET_NAME" '.[] | select(.name == $ruleset_name) | .id')
+            FEATURE_RULESET_ID=$(echo "$REPO_RULESET_LIST" | jq -r '.[] | select(.name == "repo-protection-ruleset") | .id')
+            # FEATURE_RULESET_ID=$(echo "$REPO_RULESET_LIST" | jq -r --arg ruleset_name "$RULESET_NAME" '.[] | select(.name == $ruleset_name) | .id')
 
             if [ -z "$FEATURE_RULESET_ID" ]; then
               # API to CREATE ruleset
