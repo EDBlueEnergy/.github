@@ -64,6 +64,7 @@ jobs:
             # API to update ruleset
             REPO_URL="https://api.github.com/repos/$ORG_NAME/$REPO_NAME/rulesets/$RULESET_ID"
             HTTP_METHOD="PUT"
+          fi
 
           # Apply protection rules
           curl -L \
