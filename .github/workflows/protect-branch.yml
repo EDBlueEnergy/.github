@@ -1,11 +1,11 @@
 name: Update branch protection rule
 
 on:
-  push:
-    paths:
-      - ".github/branch-protection.config.json"
-      - ".github/workflows/protect-branch.yml"
-  workflow_dispatch:
+  # push:
+  #   paths:
+  #     - ".github/branch-protection.config.json"
+  #     - ".github/workflows/protect-branch.yml"
+  # workflow_dispatch:
 jobs:
   fetch-repos:
     runs-on: ubuntu-latest

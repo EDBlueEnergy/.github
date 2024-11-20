@@ -5,6 +5,7 @@ on:
     paths:
       - ".github/repo-feature-ruleset.json"
       - ".github/workflows/repo-rulesets.yml"
+      - ".github/repo-azure-ruleset.json"
   workflow_dispatch:
 jobs:
   fetch-repos:
@@ -63,16 +64,21 @@ jobs:
         env:
           ACCESS_TOKEN: ${{ secrets.BLUE_ENERGY_TOKEN }}
           FEATUER_CONFIG_PATH: ".github/repo-feature-ruleset.json"
+          AZURE_CONFIG_PATH: ".github/repo-azure-ruleset.json"
           ORG_NAME: "EDBlueEnergy"
           TEAM_ID: ${{env.TEAM_ID}}
         run: |
 
           # Get ruleset json
           FEATURE_RULESET=$(cat $FEATUER_CONFIG_PATH)
-          RULESET_NAME=$(echo "$RULESET" | jq -r '.name')
+          FEATURE_RULESET_NAME=$(echo "$FEATURE_RULESET" | jq -r '.name')
+
+          AZURE_RULESET=$(cat $AZURE_CONFIG_PATH)
+          AZURE_RULESET_NAME=$(echo "$AZURE_RULESET" | jq -r '.name')
 
           # Add bypass team
           UPDATED_FEATURE_RULESET=$(echo "$FEATURE_RULESET" | jq --argjson team_id "$TEAM_ID" '. + {"bypass_actors":[{"actor_id":$team_id,"actor_type":"Team","bypass_mode":"always"}]}')
+          UPDATED_AZURE_RULESET=$(echo "$AZURE_RULESET" | jq --argjson team_id "$TEAM_ID" '. + {"bypass_actors":[{"actor_id":$team_id,"actor_type":"Team","bypass_mode":"always"}]}')
 
           for repo_json in $(jq -c '.[]' repos.json); do
             REPO_NAME=$(echo "$repo_json" | jq -r '.name')
@@ -90,9 +96,10 @@ jobs:
               "https://api.github.com/repos/$ORG_NAME/$REPO_NAME/rulesets"
             )
 
-            FEATURE_RULESET_ID=$(echo "$REPO_RULESET_LIST" | jq -r '.[] | select(.name == "repo-protection-ruleset") | .id')
-            # FEATURE_RULESET_ID=$(echo "$REPO_RULESET_LIST" | jq -r --arg ruleset_name "$RULESET_NAME" '.[] | select(.name == $ruleset_name) | .id')
+            FEATURE_RULESET_ID=$(echo "$REPO_RULESET_LIST" | jq -r --arg ruleset_name "$FEATURE_RULESET_NAME" '.[] | select(.name == $ruleset_name) | .id')
+            AZURE_RULESET_ID=$(echo "$REPO_RULESET_LIST" | jq -r --arg ruleset_name "$AZURE_RULESET_NAME" '.[] | select(.name == $ruleset_name) | .id')
 
+            # - APPLY Feature ruleset
             if [ -z "$FEATURE_RULESET_ID" ]; then
               # API to CREATE ruleset
               REPO_URL="https://api.github.com/repos/$ORG_NAME/$REPO_NAME/rulesets"
@@ -103,7 +110,6 @@ jobs:
               HTTP_METHOD="PUT"
             fi
 
-            # Apply feature branch rules
             curl -L \
               -X $HTTP_METHOD \
               -H "Accept: application/vnd.github+json" \
@@ -111,4 +117,24 @@ jobs:
               -H "X-GitHub-Api-Version: 2022-11-28" \
               -d "$UPDATED_FEATURE_RULESET" \
               "$REPO_URL"
+
+            # - APPLY Azure ruleset
+            if [ -z "$AZURE_RULESET_ID" ]; then
+              # API to CREATE ruleset
+              REPO_URL="https://api.github.com/repos/$ORG_NAME/$REPO_NAME/rulesets"
+              HTTP_METHOD="POST"
+            else
+              # API to UPDATE existing ruleset
+              REPO_URL="https://api.github.com/repos/$ORG_NAME/$REPO_NAME/rulesets/$AZURE_RULESET_ID"
+              HTTP_METHOD="PUT"
+            fi
+
+            curl -L \
+              -X $HTTP_METHOD \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: token $ACCESS_TOKEN" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              -d "$UPDATED_AZURE_RULESET" \
+              "$REPO_URL"
+            
           done
