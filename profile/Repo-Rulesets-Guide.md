@@ -1,4 +1,4 @@
-# Blue Repository Rulesets 
+# BlueEnergy Repository Feature Branch Rulesets 
 
 ## Overview
 
