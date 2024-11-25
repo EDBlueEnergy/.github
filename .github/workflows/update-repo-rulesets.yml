@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - ".github/repo-feature-ruleset.json"
-      - ".github/workflows/repo-rulesets.yml"
+      - ".github/workflows/update-repo-rulesets.yml"
       - ".github/repo-azure-ruleset.json"
   workflow_dispatch:
 jobs:
