@@ -131,7 +131,7 @@ jobs:
             fi
 
             DEFAULT_BRANCH_PATH="refs/heads/$DEFAULT_BRANCH"
-            UPDATED_AZURE_RULESET_WITH_DEFAULT_BRANCH=$(echo "$UPDATED_AZURE_RULESET" | jq --arg path "$DEFAULT_BRANCH_PATH" '.conditions.ref_name.include += [path]')
+            UPDATED_AZURE_RULESET_WITH_DEFAULT_BRANCH=$(echo "$UPDATED_AZURE_RULESET" | jq --arg path "$DEFAULT_BRANCH_PATH" '.conditions.ref_name.include += [$path]')
 
             curl -L \
               -X $HTTP_METHOD \
