@@ -130,7 +130,7 @@ jobs:
               HTTP_METHOD="PUT"
             fi
 
-            UPDATED_AZURE_RULESET_WITH_DEFAULT_BRANCH=$(echo "$UPDATED_AZURE_RULESET" | jq --arg default_branch "$DEFAULT_BRANCH" '.conditions.ref_name.include += ["refs/heads/$default_branch"]')
+            UPDATED_AZURE_RULESET_WITH_DEFAULT_BRANCH=$(echo "$UPDATED_AZURE_RULESET" | jq --arg default_branch "$DEFAULT_BRANCH" '.conditions.ref_name.include += ["refs/heads/"$default_branch]')
 
             curl -L \
               -X $HTTP_METHOD \
