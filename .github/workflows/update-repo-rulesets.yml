@@ -82,6 +82,7 @@ jobs:
 
           for repo_json in $(jq -c '.[]' repos.json); do
             REPO_NAME=$(echo "$repo_json" | jq -r '.name')
+            DEFAULT_BRANCH=$(echo "$repo_json" | jq -r '.default_branch')
 
             if [ "$REPO_NAME" == ".github" ]; then
               echo "Skipping .github repo..."
@@ -129,12 +130,14 @@ jobs:
               HTTP_METHOD="PUT"
             fi
 
+            UPDATED_AZURE_RULESET_WITH_DEFAULT_BRANCH=$(echo "$UPDATED_AZURE_RULESET" | jq --argjson default_branch "$DEFAULT_BRANCH" '.conditions.ref_name.include += ["refs/heads/$default_branch"]')
+
             curl -L \
               -X $HTTP_METHOD \
               -H "Accept: application/vnd.github+json" \
               -H "Authorization: token $ACCESS_TOKEN" \
               -H "X-GitHub-Api-Version: 2022-11-28" \
-              -d "$UPDATED_AZURE_RULESET" \
+              -d "$UPDATED_AZURE_RULESET_WITH_DEFAULT_BRANCH" \
               "$REPO_URL"
             
           done
